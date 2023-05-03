@@ -1,8 +1,14 @@
 const Post = require('./../models/postsModel')
+const APIFeatures = require('./../utils/apiFeatures')
 
 exports.getAllPosts = async (req, res) => {
     try {
-        const post = await Post.find()
+
+        // EXECUTE QUERY //
+        const features = new APIFeatures(Post.find(), req.query).filter()
+        const post = await features.query
+        console.log()
+
         res.status(200).json({
             status: 'success',
             result: post.length,
