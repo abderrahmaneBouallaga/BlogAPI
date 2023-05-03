@@ -21,10 +21,17 @@ class APIFeatures {
     sort() {
         if(this.queryString.sort) {
             const sortBy = this.queryString.sort.split(',').join(' ');
-            console.log(sortBy)
             this.query = this.query.sort(sortBy);
         } else {
-            thos.query = this.query.sort('author')
+            this.query = this.query.sort('author')
+        }
+        return this;
+    }
+    limit() {
+        if(this.queryString.fields) {
+            const fields = this.queryString.fields.split(',').join(' ')
+            this.query = this.query.select(fields)  
+            console.log("hello")
         }
         return this;
     }
