@@ -7,7 +7,8 @@ exports.getAllPosts = async (req, res) => {
     const features = new APIFeatures(Post.find(), req.query)
       .filter()
       .sort()
-      .limit()
+      .limitFields()
+      .paginate()
     const post = await features.query;
 
     res.status(200).json({
@@ -97,3 +98,31 @@ exports.deletePost = async (req, res) => {
     });
   }
 };
+
+exports.getNewPosts = async (req, res) => {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+
+    const stats = await Post.aggregate([
+      {
+        $match: {
+          $expr: {
+            $eq: [{ $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, today]
+          }
+        }
+      }
+    ])
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats
+      }
+    })
+  }catch(err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err
+    }
+    )
+  }
+}
