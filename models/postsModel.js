@@ -3,16 +3,16 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
     title: {
         type: String,
-        require: true,
+        require: [true, 'A post must have i title'],
         unique: true
     },
     author: {
         type: String,
-        require: true,
+        require: [true, 'A post must have a author'],
     },
     body: {
         type: String,
-        require: true
+        require: [true, 'A post must have a body']
     },
     createdAt: {
         type: Date,
