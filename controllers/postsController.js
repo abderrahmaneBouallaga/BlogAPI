@@ -1,8 +1,10 @@
 const Post = require("./../models/postsModel");
 const APIFeatures = require("./../utils/apiFeatures");
+const catchAsync = require('./../utils/catchAsync')
+const AppError = require('./../utils/appError')
+const mongoose = require('mongoose')
 
-exports.getAllPosts = async (req, res) => {
-  try {
+exports.getAllPosts = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY //
     const features = new APIFeatures(Post.find(), req.query)
       .filter()
@@ -17,19 +19,16 @@ exports.getAllPosts = async (req, res) => {
       data: {
         post,
       },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-    console.log(err);
-  }
-};
+    })
+});
 
-exports.getPost = async (req, res) => {
-  try {
+exports.getPost = catchAsync(async (req, res, next) => {
+
     const post = await Post.findById(req.params.id);
+   
+    if(!post) {
+      return next(new AppError('No post found with that ID', 404))
+    }
 
     res.status(200).json({
       status: "success",
@@ -37,16 +36,9 @@ exports.getPost = async (req, res) => {
         post,
       },
     });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+});
 
-exports.createPost = async (req, res) => {
-  try {
+exports.createPost = catchAsync(async (req, res, next) => {
     const newPost = await Post.create(req.body);
 
     res.status(201).json({
@@ -55,20 +47,17 @@ exports.createPost = async (req, res) => {
         post: newPost,
       },
     });
-  } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+});
 
-exports.updatePost = async (req, res) => {
-  try {
+exports.updatePost = catchAsync(async (req, res, next) => {
     const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+
+    if(!post) {
+      return next(new AppError('No post found with that ID', 404))
+    }
 
     res.status(200).json({
       status: "success",
@@ -76,31 +65,22 @@ exports.updatePost = async (req, res) => {
         post,
       },
     });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+  })
 
-exports.deletePost = async (req, res) => {
-  try {
+exports.deletePost = catchAsync(async (req, res) => {
     const post = await Post.findByIdAndDelete(req.params.id);
+
+    if(!post) {
+      return next(new AppError('No post found with that ID', 404))
+    }
+ 
     res.status(204).json({
       status: "success",
       data: null,
     });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+});
 
-exports.getNewPosts = async (req, res) => {
-  try {
+exports.getNewPosts = catchAsync(async (req, res) => {
     const today = new Date().toISOString().slice(0, 10);
 
     const stats = await Post.aggregate([
@@ -118,11 +98,4 @@ exports.getNewPosts = async (req, res) => {
         stats
       }
     })
-  }catch(err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err
-    }
-    )
-  }
-}
+})
