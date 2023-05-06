@@ -2,6 +2,7 @@ const express = require('express')
 
 const app = express()
 const postRouter = require('./routes/postRoutes')
+const globalErrorHandler = require('./controllers/errController');
 
 
 // MIDDLEWARE //
@@ -15,6 +16,12 @@ if(process.env.NODE_ENV === 'developmsent') {
 // ROUTES //
 app.use('/api/v1/posts', postRouter)
 
+
+app.all('*', (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))
+})
+
+app.use(globalErrorHandler)
 
 
 module.exports = app
