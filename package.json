@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/abderrahmaneBouallaga/BlogAPI/issues"
   },
-  "homepage": "https://github.com/abderrahmaneBouallaga/BlogAPI#readme"
+  "homepage": "https://github.com/abderrahmaneBouallaga/BlogAPI#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0"
+  }
 }
