@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt')
+const validator = require('validator')
 const userSchema = new mongoose.Schema(
     {
         name: {
@@ -35,19 +36,30 @@ const userSchema = new mongoose.Schema(
                 message: 'Your confirm passord is not correct'
             }
         },
-        passordChangedAt: {
+        passwordChangedAt: {
             type: Date
         }
     }
 )
 
 userSchema.pre('save', async function(next) {
-
-    if(!this.isModified('password')) return next();
+    if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 12);
     this.passwordConfirm = undefined;
-    next()
+    next();
 })
+
+userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword)
+}
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+    if(this.passwordChangedAt) {
+        const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+
+        return JWTTimestamp < changedTimestamp;
+    }
+    return false;
+}
 
 const User = mongoose.model('User', userSchema);
 
