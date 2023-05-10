@@ -1,7 +1,8 @@
 const express = require('express')
-
+const AppError = require('./utils/appError')
 const app = express()
 const postRouter = require('./routes/postRoutes')
+const userRouter = require('./routes/userRoutes')
 const globalErrorHandler = require('./controllers/errController');
 
 
@@ -15,7 +16,7 @@ if(process.env.NODE_ENV === 'developmsent') {
 
 // ROUTES //
 app.use('/api/v1/posts', postRouter)
-
+app.use('/api/v1/users', userRouter)
 
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))
