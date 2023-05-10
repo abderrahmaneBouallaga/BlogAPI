@@ -67,7 +67,7 @@ exports.updatePost = catchAsync(async (req, res, next) => {
     });
   })
 
-exports.deletePost = catchAsync(async (req, res) => {
+exports.deletePost = catchAsync(async (req, res, next) => {
     const post = await Post.findByIdAndDelete(req.params.id);
 
     if(!post) {
@@ -80,7 +80,7 @@ exports.deletePost = catchAsync(async (req, res) => {
     });
 });
 
-exports.getNewPosts = catchAsync(async (req, res) => {
+exports.getNewPosts = catchAsync(async (req, res, next) => {
     const today = new Date().toISOString().slice(0, 10);
 
     const stats = await Post.aggregate([
