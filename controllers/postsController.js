@@ -2,7 +2,7 @@ const Post = require("./../models/postsModel");
 const APIFeatures = require("./../utils/apiFeatures");
 const catchAsync = require('./../utils/catchAsync')
 const AppError = require('./../utils/appError')
-const mongoose = require('mongoose')
+
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
     // EXECUTE QUERY //
